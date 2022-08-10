@@ -1,15 +1,31 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
+	"we-web-api/book"
+	"we-web-api/handler"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 func main() {
+
+	dsn := "host=localhost user=postgres password=yudistirar626 dbname=web-api port=5432 sslmode=disable TimeZone=Asia/Shanghai"
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+
+	if err != nil {
+		log.Fatal("DB Connection Failed")
+	}
+
+	fmt.Println("DB Connection Success")
+
+	db.AutoMigrate(&book.Book{})
+
+	// bookRepository := book.Repository{db}
 
 	router := gin.Default()
 
@@ -21,84 +37,64 @@ func main() {
 				"role"	:   "Software Engineer",
 			})
 	})
-	v1.GET("/hello", helloHandler )
-	v1.GET("/books/:id", booksHandler)
-	v1.GET("/book/:id/:title", bookHandler)
-	v1.GET("/query", queryHandler)
+	v1.GET("/hello", handler.HelloHandler )
+	v1.GET("/books/:id", handler.BooksHandler)
+	v1.GET("/book/:id/:title", handler.BookHandler)
+	v1.GET("/query", handler.QueryHandler)
 		
-	v1.POST("/bookspost", postBooksHandler)
+	v1.POST("/bookspost", handler.PostBooksHandler)
 
 	router.Run()
-
-}
-func helloHandler(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Hello World",
-		"from": "Yudistira Rivaldi",
-	})
 }
 
-func booksHandler(c *gin.Context) {
-	id := c.Param("id")
+// ===========
+	// CREATE DATA
+	// ===========
 
-	c.JSON(http.StatusOK, gin.H {
-		"id": id,
-		"message": "Hello World",
-	})
-}
+	// book := book.Book{}
+	// book.Title = "Javascript"
+	// book.Description = "Javascript is a programming language"
+	// book.Price = 20
+	// book.Rating = 8
 
-func queryHandler(c *gin.Context) {
-	title := c.Query("title")
-	price := c.Query("price")
+	// err = db.Create(&book).Error
 
-	c.JSON(http.StatusOK, gin.H {
-		"title" : title,
-		"price" : price,
-	})
-}
+	// if err != nil {
+	// 	fmt.Println("Error detected when create data")
+	// }
 
-func bookHandler(c *gin.Context) {
+	// ===============================================
+	// READ GET DATA
+	// ===============================================
 
-	id := c.Param("id")
-	title := c.Param("title")
+	// book := book.Book{}
 
-	c.JSON(http.StatusOK, gin.H {
-		"id"	: id,
-		"title" : title,
-	})
+	// err = db.Debug().Where("id = ?", 2).First(&book).Error
+	// if err != nil {
+	// 	fmt.Println("Error detected when get data")
+	// }
 
-}
+	// ===============================================
+	// DELETE DATA
+	// ===============================================
 
-type BookInput struct {
-	Title string `json:"title" binding:"required" `
-	Price json.Number `json:"price" binding:"required,number"`
-}
+	// err = db.Delete(&book).Error
+	// if err != nil {
+	// 	fmt.Println("Error detected when delete data")
+	// }
 
-func postBooksHandler(c *gin.Context) {
-	var bookInput BookInput
 
-	err := c.ShouldBindJSON(&bookInput)
+	// ===============================================
+	// UPDATE DATA
+	// ===============================================
+	
+	// book.Title = "Golang Book"
 
-	if err != nil {
+	// err = db.Save(&book).Error
+	// if err != nil {
+	// 	fmt.Println("Error detected when update data")
+	// }
 
-		// make multiple error
-		errorMessages := []string{}
-		for _, e := range err.(validator.ValidationErrors) {
-			errorMessage := fmt.Sprintf("Error on field %s, condition %s", e.Field(), e.ActualTag())
-			errorMessages = append(errorMessages, errorMessage)
-		return
-		} 
 
-			c.JSON(http.StatusBadRequest, gin.H {
-				"error" : errorMessages,
-			})
 
-	}
 
-	c.JSON(http.StatusOK, gin.H {
-		"title" : bookInput.Title,
-		"price" : bookInput.Price,
-
-	})
-
-}
