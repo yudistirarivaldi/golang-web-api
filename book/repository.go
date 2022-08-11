@@ -25,7 +25,16 @@ func (r *repository) FindAll() ([]Book, error) {
 }
 
 func (r *repository) FindById(ID int) (Book, error) {
-	var books []Book
+	var book Book
 
-	err := r.db.whe
+	err := r.db.Find(&book, ID).Error
+
+	return book, err
+}
+
+func (r *repository) Create(book Book) (Book, error) {
+	err := r.db.Create(&book).Error
+
+	return book, err
+
 }

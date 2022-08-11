@@ -25,7 +25,38 @@ func main() {
 
 	db.AutoMigrate(&book.Book{})
 
-	// bookRepository := book.Repository{db}
+	bookRepository := book.NewRepository(db)
+
+	// ==========
+	// FIND ALL DATA
+	// ==========
+	books, err := bookRepository.FindAll()
+
+	for _, book := range books {
+		fmt.Println("Title : ", book.Title)
+	}
+
+	// ==========
+	// FIND BY ID
+	// ==========
+
+	// book, err := bookRepository.FindById(3)
+
+	// fmt.Println("Title : ", book.Title)
+
+
+	// ==========
+	// CREATE DATA
+	// ==========
+	// book := book.Book {
+	// 	Title : "Javascript",
+	// 	Description : "Javascript is a programming language",
+	// 	Price : 150000,
+	// 	Rating : 4,
+	// }
+
+	// bookRepository.Create(book)
+
 
 	router := gin.Default()
 
