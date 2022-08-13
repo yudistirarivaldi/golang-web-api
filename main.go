@@ -85,12 +85,19 @@ func main() {
 				"role"	:   "Software Engineer",
 			})
 	})
-	v1.GET("/hello", bookHandler.HelloHandler )
-	v1.GET("/books/:id", bookHandler.BooksHandler)
-	v1.GET("/book/:id/:title", bookHandler.BookHandler)
-	v1.GET("/query", bookHandler.QueryHandler)
+
+	// ROUTE BELAJAR
+	// v1.GET("/hello", bookHandler.HelloHandler )
+	// v1.GET("/books/:id", bookHandler.BooksHandler)
+	// v1.GET("/book/:id/:title", bookHandler.BookHandler)
+	// v1.GET("/query", bookHandler.QueryHandler)
 		
-	v1.POST("/bookspost", bookHandler.PostBooksHandler)
+	v1.POST("/bookspost", bookHandler.CreateBooksHandler)
+	v1.GET("/books", bookHandler.GetBooksHandler)
+	v1.GET("/book/:id", bookHandler.GetBookById)
+	v1.PUT("/book/:id", bookHandler.UpdateBooksHandler)
+	v1.DELETE("/book/:id", bookHandler.DeleteBooksHandler)
+	
 
 	router.Run(":8080")
 }
