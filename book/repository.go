@@ -12,15 +12,15 @@ type repository struct {
 	db *gorm.DB
 }
 
-func NewRepository(db *gorm.DB) repository {
-	return repository{db}
+func NewRepository(db *gorm.DB) *repository {
+	return &repository{db}
 }
 
 func (r *repository) FindAll() ([]Book, error) {
-
 	var books []Book
-	err := r.db.Find(&books).Error
 	
+	err := r.db.Find(&books).Error
+
 	return books, err
 }
 
@@ -36,5 +36,6 @@ func (r *repository) Create(book Book) (Book, error) {
 	err := r.db.Create(&book).Error
 
 	return book, err
-
 }
+
+

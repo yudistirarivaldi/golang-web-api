@@ -26,9 +26,26 @@ func main() {
 	db.AutoMigrate(&book.Book{})
 
 	bookRepository := book.NewRepository(db)
+	bookService := book.NewService(bookRepository)
+
+	// SERVICE
 
 	// ==========
-	// FIND ALL DATA
+	// CREATE DATA REPOSITORY
+	// ==========
+
+	bookRequest := book.BookRequest{
+		Title: "Test Service Terbaru",
+		Price : "20000",
+	}
+	bookService.Create(bookRequest)
+
+
+	
+	// REPOSITORY
+
+	// ==========
+	// FIND ALL DATA REPOSITORY
 	// ==========
 	books, err := bookRepository.FindAll()
 
@@ -37,22 +54,21 @@ func main() {
 	}
 
 	// ==========
-	// FIND BY ID
+	// FIND BY ID REPOSITORY
 	// ==========
 
 	// book, err := bookRepository.FindById(3)
 
 	// fmt.Println("Title : ", book.Title)
 
-
 	// ==========
-	// CREATE DATA
+	// CREATE DATA REPOSITORY
 	// ==========
 	// book := book.Book {
-	// 	Title : "Javascript",
-	// 	Description : "Javascript is a programming language",
-	// 	Price : 150000,
-	// 	Rating : 4,
+	// 	Title : "C#",
+	// 	Description : "C# is a programming language",
+	// 	Price : 250000,
+	// 	Rating : 5,
 	// }
 
 	// bookRepository.Create(book)
