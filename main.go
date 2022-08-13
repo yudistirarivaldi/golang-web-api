@@ -27,6 +27,7 @@ func main() {
 
 	bookRepository := book.NewRepository(db)
 	bookService := book.NewService(bookRepository)
+	bookHandler := handler.NewBookHandler(bookService)
 
 	// SERVICE
 
@@ -84,14 +85,14 @@ func main() {
 				"role"	:   "Software Engineer",
 			})
 	})
-	v1.GET("/hello", handler.HelloHandler )
-	v1.GET("/books/:id", handler.BooksHandler)
-	v1.GET("/book/:id/:title", handler.BookHandler)
-	v1.GET("/query", handler.QueryHandler)
+	v1.GET("/hello", bookHandler.HelloHandler )
+	v1.GET("/books/:id", bookHandler.BooksHandler)
+	v1.GET("/book/:id/:title", bookHandler.BookHandler)
+	v1.GET("/query", bookHandler.QueryHandler)
 		
-	v1.POST("/bookspost", handler.PostBooksHandler)
+	v1.POST("/bookspost", bookHandler.PostBooksHandler)
 
-	router.Run()
+	router.Run(":8080")
 }
 
 // ===========

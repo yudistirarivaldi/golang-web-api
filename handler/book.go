@@ -9,14 +9,22 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-func HelloHandler(c *gin.Context) {
+type bookHandler struct {
+	bookService book.Service
+}
+
+func NewBookHandler(bookService book.Service) *bookHandler {
+	return &bookHandler{bookService}
+}
+
+func (h *bookHandler) HelloHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Hello World",
 		"from":    "Yudistira Rivaldi",
 	})
 }
 
-func BooksHandler(c *gin.Context) {
+func (h *bookHandler) BooksHandler(c *gin.Context) {
 	id := c.Param("id")
 
 	c.JSON(http.StatusOK, gin.H{
@@ -25,7 +33,7 @@ func BooksHandler(c *gin.Context) {
 	})
 }
 
-func QueryHandler(c *gin.Context) {
+func (h *bookHandler) QueryHandler(c *gin.Context) {
 	title := c.Query("title")
 	price := c.Query("price")
 
@@ -35,7 +43,7 @@ func QueryHandler(c *gin.Context) {
 	})
 }
 
-func BookHandler(c *gin.Context) {
+func (h *bookHandler) BookHandler(c *gin.Context) {
 
 	id := c.Param("id")
 	title := c.Param("title")
@@ -47,7 +55,7 @@ func BookHandler(c *gin.Context) {
 
 }
 
-func PostBooksHandler(c *gin.Context) {
+func (h *bookHandler) PostBooksHandler(c *gin.Context) {
 	var bookRequest book.BookRequest
 
 	err := c.ShouldBindJSON(&bookRequest)
@@ -68,9 +76,18 @@ func PostBooksHandler(c *gin.Context) {
 
 	}
 
+	// call service
+	book, err := h.bookService.Create(bookRequest)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H {
+			"errors" : err,
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"title": bookRequest.Title,
-		"price": bookRequest.Price,
+		"data" : book,
 	})
 
 }
